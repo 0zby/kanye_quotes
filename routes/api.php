@@ -1,8 +1,6 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\QuotesController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function (Request $request) {
-    return 'Hello, world';
-});
+Route::get('/quotes/kanye', [QuotesController::class, 'getKanyeQuotes'])->name('quotes.kanye');
