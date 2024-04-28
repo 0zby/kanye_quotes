@@ -11,4 +11,10 @@ class QuotesController extends Controller {
         $quotes = Cache::rememberForever('quotes.kanye.endpoint', fn () => QuotesFetcher::driver('kanye')->fetchMany(5));
         return response()->json($quotes);
     }
+
+    public function resetKanyeQuotes()
+    {
+        Cache::forget('quotes.kanye.endpoint');
+        Cache::rememberForever('quotes.kanye.endpoint', fn () => QuotesFetcher::driver('kanye')->fetchMany(5));
+    }
 }
