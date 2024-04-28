@@ -15,6 +15,6 @@ class QuotesController extends Controller {
     public function resetKanyeQuotes()
     {
         Cache::forget('quotes.kanye.endpoint');
-        Cache::rememberForever('quotes.kanye.endpoint', fn () => QuotesFetcher::driver('kanye')->fetchMany(5));
+        return $this->getKanyeQuotes();
     }
 }
