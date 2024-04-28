@@ -60,4 +60,26 @@ class QuotesAPITest extends TestCase
 
         $response->assertStatus(Response::HTTP_OK);
     }
+
+    /**
+     * Test the reset Kanye quotes endpoint is inaccessible when using an invalid token.
+     */
+    public function test_resetting_kanye_quotes_without_valid_token_is_impossible(): void
+    {
+        $response = $this->withoutToken()
+            ->get(route('quotes.kanye.reset'));
+
+        $response->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    /**
+     * Test the resetting Kanye quotes endpoint is accessible when using a valid token.
+     */
+    public function test_resetting_kanye_quotes_with_valid_token_is_possible(): void
+    {
+        $response = $this->withToken(env('API_TOKEN'), 'Bearer')
+            ->patch(route('quotes.kanye.reset'));
+
+        $response->assertStatus(Response::HTTP_OK);
+    }
 }
