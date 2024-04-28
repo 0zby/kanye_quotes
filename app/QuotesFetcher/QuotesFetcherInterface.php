@@ -10,4 +10,6 @@ interface QuotesFetcherInterface
      * @return string The quote from the external resource.
      */
     public function fetch(): string;
+
+    public function fetchMany(int $numQuotes): array;
 }
