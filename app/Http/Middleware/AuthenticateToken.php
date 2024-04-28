@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 class AuthenticateToken
 {
     /**
-     * Handle an incoming request.
+     * Handle an incoming request, only proceeding when a valid token is present.
      *
      * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
@@ -27,6 +27,12 @@ class AuthenticateToken
         return $next($request);
     }
 
+    /**
+     * Check a given token against the one set in the environment file.
+     *
+     * @param ?string The token given in the request.
+     * @return bool Whether the token matches the application's token.
+     */
     private function isValidToken(?string $token): bool
     {
         return $token === env('API_TOKEN');
