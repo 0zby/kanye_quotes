@@ -23,6 +23,6 @@ class QuotesFetcherManager extends Manager
      */
     public function createKanyeDriver(): QuotesFetcherInterface
     {
-        return new KanyeQuotesFetcher();
+        return app()->make(KanyeQuotesFetcher::class);
     }
 }
