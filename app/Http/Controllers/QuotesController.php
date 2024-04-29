@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\QuotesFetcher\QuotesFetcher;
 use App\QuotesFetcher\ThirdPartyAPIUnavailableException;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 
 class QuotesController extends Controller {
-    public function getKanyeQuotes()
+    /**
+     * Get 5 Kanye West quotes and return them in a JSON response, from the cache if available.
+     */
+    public function getKanyeQuotes(): JsonResponse
     {
         try {
             $quotes = Cache::rememberForever(
@@ -25,7 +29,10 @@ class QuotesController extends Controller {
         return response()->json($quotes);
     }
 
-    public function resetKanyeQuotes()
+    /**
+     * Reset the cache of Kanye West quotes and return the new quotes in a JSON response.
+     */
+    public function resetKanyeQuotes(): JsonResponse
     {
         Cache::forget('quotes.kanye.endpoint');
         return $this->getKanyeQuotes();
