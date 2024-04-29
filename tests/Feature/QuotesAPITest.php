@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\QuotesFetcher\KanyeQuotesFetcher;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Http;
 use Mockery\MockInterface;
 use Tests\TestCase;
 
@@ -132,5 +133,26 @@ class QuotesAPITest extends TestCase
             ->patch(route('quotes.kanye.reset'));
 
         $response->assertStatus(Response::HTTP_OK);
+    }
+
+    /**
+     * Test that when the external API is down that our API gives sensible result.
+     */
+    public function test_internal_server_error_with_kanye_api(): void
+    {
+        Http::fake([
+            'https://api.kanye.rest' => Http::sequence()
+                ->push(['quote' => 'Something Kanye said'], 200)
+                ->push(['quote' => 'Something Kanye said'], 200)
+                ->push(['quote' => 'Something Kanye said'], 200)
+                ->push(['quote' => 'Something Kanye said'], 200)
+                ->pushStatus(500),
+        ]);
+
+        $response = $this->withoutMiddleware()
+            ->get(route('quotes.kanye.get'));
+
+        $response->assertStatus(Response::HTTP_SERVICE_UNAVAILABLE);
+        $response->assertExactJson(['error' => 'Third-party API is unavailable']);
     }
 }
