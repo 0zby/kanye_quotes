@@ -2,8 +2,8 @@
 
 namespace App\QuotesFetcher;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\Promise;
+use Illuminate\Http\Client\Pool;
+use Illuminate\Support\Facades\Http;
 
 class KanyeQuotesFetcher implements QuotesFetcherInterface
 {
@@ -14,8 +14,7 @@ class KanyeQuotesFetcher implements QuotesFetcherInterface
      */
     public function fetch(): string
     {
-        $client = new Client(['base_uri' => 'https://api.kanye.rest']);
-        $response = $client->get('');
+        $response = Http::get('https://api.kanye.rest');
         return $this->extractQuoteFromResponse($response);
     }
 
@@ -27,19 +26,15 @@ class KanyeQuotesFetcher implements QuotesFetcherInterface
      */
     public function fetchMany(int $numQuotes): array
     {
-        $client = new Client(['base_uri' => 'https://api.kanye.rest']);
-
-        $promises = [];
-        for ($i = 0; $i < $numQuotes; $i++) {
-            $promises[] = $client->getAsync('');
-        }
-
-        $results = Promise\Utils::settle($promises)->wait();
+        $responses = Http::pool(function (Pool $pool) use ($numQuotes) {
+            for ($i = 0; $i < $numQuotes; $i++) {
+                $pool->get('https://api.kanye.rest');
+            }
+        });
 
         $quotes = [];
-        foreach ($results as $result) {
-            if ($result['state'] === 'fulfilled') {
-                $response = $result['value'];
+        foreach ($responses as $response) {
+            if ($response->ok()) {
                 $quotes[] = $this->extractQuoteFromResponse($response);
             } else {
                 // Handle failed promises
@@ -51,6 +46,6 @@ class KanyeQuotesFetcher implements QuotesFetcherInterface
 
     private function extractQuoteFromResponse($response): string
     {
-        return json_decode($response->getBody()->getContents(), true)['quote'];
+        return $response->json('quote');
     }
 }
