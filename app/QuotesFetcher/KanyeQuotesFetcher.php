@@ -3,6 +3,7 @@
 namespace App\QuotesFetcher;
 
 use Illuminate\Http\Client\Pool;
+use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -30,7 +31,7 @@ class KanyeQuotesFetcher implements QuotesFetcherInterface
      * Fetch and return multiple quotes of Kanye West asynchronously.
      *
      * @param int $numQuotes The number of quotes to fetch.
-     * @return array An array of quotes of Kanye West.
+     * @return array<string> An array of quotes of Kanye West.
      * @throws ThirdPartyAPIUnavailableException If the third-party API is unavailable.
      */
     public function fetchMany(int $numQuotes): array
@@ -54,7 +55,13 @@ class KanyeQuotesFetcher implements QuotesFetcherInterface
         return $quotes;
     }
 
-    private function extractQuoteFromResponse($response): string
+    /**
+     * Extract the quote from the response.
+     *
+     * @param Response $response The response from the API.
+     * @return string The quote.
+     */
+    private function extractQuoteFromResponse(Response $response): string
     {
         return $response->json('quote');
     }
