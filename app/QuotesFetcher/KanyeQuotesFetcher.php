@@ -12,10 +12,17 @@ class KanyeQuotesFetcher implements QuotesFetcherInterface
      * Fetch and return a quote of Kanye West.
      *
      * @return string The quote of Kanye West.
+     * @throws ThirdPartyAPIUnavailableException If the third-party API is unavailable.
      */
     public function fetch(): string
     {
         $response = Http::get('https://api.kanye.rest');
+
+        if (! $response->ok()) {
+            Log::error('Failed to fetch Kanye West quote.', (array) $response);
+            throw new ThirdPartyAPIUnavailableException();
+        }
+
         return $this->extractQuoteFromResponse($response);
     }
 
@@ -36,12 +43,12 @@ class KanyeQuotesFetcher implements QuotesFetcherInterface
 
         $quotes = [];
         foreach ($responses as $response) {
-            if ($response->ok()) {
-                $quotes[] = $this->extractQuoteFromResponse($response);
-            } else {
+            if (! $response->ok()) {
                 Log::error('Failed to fetch Kanye West quote.', (array) $response);
                 throw new ThirdPartyAPIUnavailableException();
             }
+
+            $quotes[] = $this->extractQuoteFromResponse($response);
         }
 
         return $quotes;
