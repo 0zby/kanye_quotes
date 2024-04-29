@@ -30,7 +30,7 @@ class AuthenticateToken
     /**
      * Check a given token against the one set in the environment file.
      *
-     * @param ?string The token given in the request.
+     * @param ?string $token The token given in the request.
      * @return bool Whether the token matches the application's token.
      */
     private function isValidToken(?string $token): bool
