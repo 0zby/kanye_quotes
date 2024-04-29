@@ -6,15 +6,17 @@
 
 # Setup
 
-Clone the repository using git.
+Clone the repository using git `git clone https://github.com/0zby/kanye_quotes.git`.
 
-Change directory into the newly created repository folder.
+Change directory into the newly created repository folder `cd kanye_quotes`.
 
 Install using composer `composer install`.
 
 Copy the example environment file `cp .env.example .env`.
 
 Launch the containers `./vendor/bin/sail up -d`.
+
+Run the migrations `./vendor/bin/sail artisan migrate`.
 
 
 # Running tests
